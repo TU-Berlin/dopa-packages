@@ -2,12 +2,18 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>strat</groupId>
   <artifactId>sopremo-ie</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.4-SNAPSHOT</version>
+    	<parent>
+		<artifactId>sopremo-package</artifactId>
+		<groupId>eu.stratosphere</groupId>
+		<version>0.4-SNAPSHOT</version>
+		<relativePath>..</relativePath>
+	</parent>
   <dependencies>
   	<dependency>
   		<groupId>eu.stratosphere</groupId>
   		<artifactId>sopremo-common</artifactId>
-  		<version>0.2.1</version>
+  		<version>0.4-SNAPSHOT</version>
   	</dependency>
   </dependencies>
     <build>

@@ -6,19 +6,19 @@
   	<parent>
 		<artifactId>sopremo-package</artifactId>
 		<groupId>eu.stratosphere</groupId>
-		<version>0.3</version>
+		<version>0.4-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
   <dependencies>
   	<dependency>
   		<groupId>eu.stratosphere</groupId>
   		<artifactId>sopremo-common</artifactId>
-  		<version>0.3</version>
+  		<version>0.4-SNAPSHOT</version>
   	</dependency>
   	<dependency>
   		<groupId>eu.stratosphere</groupId>
   		<artifactId>pact-hbase</artifactId>
-  		<version>0.3</version>
+  		<version>0.4-SNAPSHOT</version>
   	</dependency>
   </dependencies>
   <build>

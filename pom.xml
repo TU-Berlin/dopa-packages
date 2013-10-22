@@ -4,7 +4,7 @@
   <groupId>eu.stratosphere</groupId>
   <artifactId>sopremo-package</artifactId>
   <packaging>pom</packaging>
-  <version>0.3</version>
+  <version>0.4-SNAPSHOT</version>
   <name>sopremo-package</name>
   <inceptionYear>2012</inceptionYear>
   <licenses>
@@ -51,8 +51,11 @@
       <url>http://equalsverifier.googlecode.com/svn/maven/</url>
     </repository>
     <repository>
-      <id>eu.stratosphere</id>
-      <url>http://dopa.dima.tu-berlin.de/jars/</url>
+      <id>snapshots-repo</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+      <snapshots>
+         <enabled>true</enabled>
+      </snapshots>
     </repository>
   </repositories>
   <build>
