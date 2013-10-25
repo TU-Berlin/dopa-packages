@@ -63,6 +63,7 @@ public class DataMarketFormat extends SopremoFileFormat {
 		 *
 		 */
 		private Schema schema;
+		private Schema schema2;
 
 		private String urlParameter;
 		
