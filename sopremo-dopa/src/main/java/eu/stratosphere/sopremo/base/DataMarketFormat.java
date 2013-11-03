@@ -19,11 +19,9 @@ import java.util.regex.Pattern;
 
 import eu.stratosphere.nephele.configuration.Configuration;
 import eu.stratosphere.nephele.template.GenericInputSplit;
-import eu.stratosphere.pact.common.io.GenericInputFormat;
 import eu.stratosphere.pact.common.type.PactRecord;
 import eu.stratosphere.pact.generic.io.InputFormat;
 import eu.stratosphere.sopremo.EvaluationContext;
-import eu.stratosphere.sopremo.Schema;
 import eu.stratosphere.sopremo.SopremoEnvironment;
 import eu.stratosphere.sopremo.io.GeneratorInputFormat;
 import eu.stratosphere.sopremo.io.GeneratorInputSplit;
