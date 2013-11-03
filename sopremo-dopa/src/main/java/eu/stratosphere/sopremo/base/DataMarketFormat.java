@@ -17,36 +17,31 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.google.common.collect.Iterators;
-
 import eu.stratosphere.nephele.configuration.Configuration;
 import eu.stratosphere.nephele.template.GenericInputSplit;
-import eu.stratosphere.pact.common.contract.GenericDataSource;
-import eu.stratosphere.pact.common.generic.io.InputFormat;
-import eu.stratosphere.pact.common.io.GenericInputFormat;
-import eu.stratosphere.pact.common.plan.PactModule;
 import eu.stratosphere.pact.common.type.PactRecord;
+import eu.stratosphere.pact.generic.io.InputFormat;
 import eu.stratosphere.sopremo.EvaluationContext;
-import eu.stratosphere.sopremo.expressions.EvaluationExpression;
+import eu.stratosphere.sopremo.SopremoEnvironment;
+import eu.stratosphere.sopremo.io.GeneratorInputFormat;
+import eu.stratosphere.sopremo.io.GeneratorInputSplit;
 import eu.stratosphere.sopremo.io.JsonParseException;
 import eu.stratosphere.sopremo.io.JsonParser;
-import eu.stratosphere.sopremo.io.SopremoFileFormat;
-import eu.stratosphere.sopremo.operator.ElementaryOperator;
-import eu.stratosphere.sopremo.operator.InputCardinality;
+import eu.stratosphere.sopremo.io.SopremoFormat;
 import eu.stratosphere.sopremo.operator.Name;
 import eu.stratosphere.sopremo.operator.Property;
 import eu.stratosphere.sopremo.pact.SopremoUtil;
-import eu.stratosphere.sopremo.serialization.Schema;
+import eu.stratosphere.sopremo.serialization.SopremoRecord;
 import eu.stratosphere.sopremo.type.ArrayNode;
 import eu.stratosphere.sopremo.type.IArrayNode;
 import eu.stratosphere.sopremo.type.IJsonNode;
 import eu.stratosphere.sopremo.type.IObjectNode;
-import eu.stratosphere.sopremo.type.NullNode;
+import eu.stratosphere.sopremo.type.MissingNode;
 import eu.stratosphere.sopremo.type.ObjectNode;
 import eu.stratosphere.sopremo.type.TextNode;
 
 @Name(verb = "datamarket")
-public class DataMarketFormat extends SopremoFileFormat {
+public class DataMarketFormat extends SopremoFormat {
 
 	protected static final String DM_URL_PARAMETER = "ser_dm_url_parameter";
 	protected static final String DM_API_KEY_PARAMETER = "ser_api_key_parameter";
@@ -54,15 +49,10 @@ public class DataMarketFormat extends SopremoFileFormat {
 	private String  urlParameter=null;
 	private String apiKey = null;
 
-	public static class DataMarketInputFormat extends GenericInputFormat {
+//	public static class DataMarketInputFormat extends GenericInputFormat {
+	public static class DataMarketInputFormat extends GeneratorInputFormat {
 
 		private EvaluationContext context;
-
-		/**
-		 * Schema loaded from config.
-		 *
-		 */
-		private Schema schema;
 
 		private String urlParameter;
 		
@@ -72,10 +62,8 @@ public class DataMarketFormat extends SopremoFileFormat {
 
 		@Override
 		public void configure(Configuration parameters) {
-			super.configure(parameters);
-			this.context = (EvaluationContext) SopremoUtil.getObject(
-					parameters, SopremoUtil.CONTEXT, null);
-			this.schema = this.context.getOutputSchema(0);
+			this.context = (EvaluationContext) SopremoUtil.getEvaluationContext(parameters);
+			SopremoEnvironment.getInstance().setEvaluationContext(context);
 			SopremoUtil.configureWithTransferredState(this, InputFormat.class, parameters);
 		}
 
@@ -87,7 +75,7 @@ public class DataMarketFormat extends SopremoFileFormat {
 		 * (int)
 		 */
 		@Override
-		public GenericInputSplit[] createInputSplits(final int minNumSplits)
+		public GeneratorInputSplit[] createInputSplits(final int minNumSplits)
 				throws IOException {
 
 			return super.createInputSplits(minNumSplits);
@@ -171,11 +159,12 @@ public class DataMarketFormat extends SopremoFileFormat {
 		 * @see
 		 * eu.stratosphere.pact.common.io.GenericInputFormat#getInputSplitType()
 		 */
-		@Override
-		public Class<GenericInputSplit> getInputSplitType() {
-			return GenericInputSplit.class;
+	/*	@Override
+		public Class<GeneratorInputSplit> getInputSplitType() {
+			//return GenericInputSplit.class;
+			return getInputSplitType();
 		}
-
+*/
 		/*
 		 * (non-Javadoc)
 		 * 
@@ -208,12 +197,12 @@ public class DataMarketFormat extends SopremoFileFormat {
 		}
 
 		@Override
-		public boolean nextRecord(final PactRecord record) throws IOException {
+		public boolean nextRecord(final SopremoRecord record) throws IOException {
 			if (this.reachedEnd())
 				throw new IOException("End of input split is reached");
 
 			final IJsonNode value = this.nodeIterator.next();
-			this.schema.jsonToRecord(value, record);
+			record.setNode(value);
 			return true;
 		}
 
@@ -353,7 +342,7 @@ public class DataMarketFormat extends SopremoFileFormat {
 	    	
 	    	IJsonNode ds_id=datasets.get(i).get("ds_id");
 	    	String one_ds_id=ds_id.toString();
-	        if (!datasets.get(i).get("dimension").isMissing()) {
+	        if (!(datasets.get(i).get("dimension") instanceof MissingNode)) {
 	        	IObjectNode dimensions=(IObjectNode) datasets.get(i).get ("dimension");
 	        	Iterator<Entry<String, IJsonNode>> iterator=dimensions.iterator();
 		        while(iterator.hasNext()){
@@ -482,16 +471,16 @@ public class DataMarketFormat extends SopremoFileFormat {
 	 * @see eu.stratosphere.sopremo.io.SopremoFileFormat#getInputFormat()
 	 */
 	@Override
-	public Class<? extends InputFormat<PactRecord, ?>> getInputFormat() {
-		return DataMarketInputFormat.class;
+	public Class<? extends SopremoInputFormat<?>> getInputFormat() {
+		return (Class<? extends SopremoInputFormat<?>>) DataMarketInputFormat.class;
 	}
 	
 	/* (non-Javadoc)
 	 * @see eu.stratosphere.sopremo.io.SopremoFileFormat#getPreferredFilenameExtension()
 	 */
-	@Override
+	/*@Override
 	protected String getPreferredFilenameExtension() {
 		return null;
-	}
+	}*/
 	
 }
