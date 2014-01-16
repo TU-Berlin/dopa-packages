@@ -9,16 +9,19 @@
 			<groupId>eu.stratosphere</groupId>
 			<artifactId>sopremo-common</artifactId>
 			<version>0.4-SNAPSHOT</version>
+            <scope>provided</scope>
 		</dependency>
         <dependency>
             <groupId>eu.stratosphere</groupId>
             <artifactId>sopremo-testplan</artifactId>
             <version>0.4-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>eu.stratosphere</groupId>
             <artifactId>pact-hbase</artifactId>
             <version>0.4-hadoop2-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.okkam.dopa.buffer</groupId>
@@ -38,6 +41,7 @@
                 <groupId>eu.stratosphere</groupId>
                 <artifactId>pact-common</artifactId>
                 <version>0.4-hadoop2-SNAPSHOT</version>
+                <scope>provided</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -61,6 +65,17 @@
 					</execution>
 				</executions>
 			</plugin>
-		</plugins>
+
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+            </plugin>
+
+
+        </plugins>
 	</build>
 </project>
