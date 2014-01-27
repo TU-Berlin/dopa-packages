@@ -85,7 +85,7 @@ public class OKKAMGetEntities extends ElementaryOperator<OKKAMGetEntities> {
                         queryurls = new ArrayList<String>(1);
                         queryurls.add(urls.toString());
                     }
-                    query.setUrls(queryurls);
+                    query.setUris(queryurls);
                     try {
                         GetOkkamAnnotatedEntitiesResponse response = client.getOkkamAnnotatedEntities(query, false);
                         List<Document> docs =  response.getOkkamAnnotations();
@@ -96,7 +96,7 @@ public class OKKAMGetEntities extends ElementaryOperator<OKKAMGetEntities> {
                         result.put("pool", poolresult);
                         for (Document doc : docs) {
                             System.out.println("##### Found " + docs.size() + "documents");
-                            result.put("url", new TextNode(doc.getUrl()));
+                            result.put("url", new TextNode(doc.getUri()));
                             for (Detection detection : doc.getDetections()) {
                                 System.out.println("##### Found " + doc.getDetections().size() + "detections");
                                 if (detection.getOkkamId() != null ) {

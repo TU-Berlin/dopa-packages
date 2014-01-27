@@ -76,7 +76,7 @@ public class OKKAMUnstructuredDocuments extends ElementaryOperator<OKKAMUnstruct
             query.setDatapool(DopaDatapools.valueOf(poolid));
             try {
                 GetUnstructuredDocumentsResponse response = client.getUnstructuredDocuments(query, false);
-                List<String> urls =  response.getOkkamIdUrls();
+                List<String> urls =  response.getOkkamIdUris();
                 ObjectNode poolresult = new ObjectNode();
                 poolresult.put("id", new TextNode(poolid));
                 poolresult.put("crawl", new TextNode(crawl));
