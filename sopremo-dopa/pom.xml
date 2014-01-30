@@ -4,6 +4,13 @@
 	<groupId>eu.dopa</groupId>
 	<artifactId>sopremo-dopa</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+
+    <modules>
+        <module>init</module>
+    </modules>
+
+    <packaging>pom</packaging>
+
 	<dependencies>
 		<dependency>
 			<groupId>eu.stratosphere</groupId>
@@ -33,7 +40,47 @@
         	<artifactId>json</artifactId>
         	<version>20090211</version>
       	</dependency>
+
+        <!-- IMR dependencies -->
+        <dependency>
+            <groupId>net.internetmemory</groupId>
+            <artifactId>IMService</artifactId>
+            <version>1.7-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>net.internetmemory</groupId>
+            <artifactId>IMCommons</artifactId>
+            <version>1.7-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ning</groupId>
+            <artifactId>async-http-client</artifactId>
+            <version>1.7.9</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>11.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-client</artifactId>
+            <version>1.18</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-json</artifactId>
+            <version>1.8</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.directory.studio</groupId>
+            <artifactId>org.apache.commons.lang</artifactId>
+            <version>2.6</version>
+        </dependency>
+
 	</dependencies>
+
+
 
     <dependencyManagement>
         <dependencies>
@@ -53,10 +100,10 @@
 				<version>2.5.1</version>
 				<executions>
 					<execution>
-						<id>default-testCompile</id>
-						<phase>test-compile</phase>
+						<id>default-compile</id>
+						<phase>compile</phase>
 						<goals>
-							<goal>testCompile</goal>
+							<goal>compile</goal>
 						</goals>
 						<configuration>
 							<source>1.6</source>

@@ -1,0 +1,53 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>eu.dopa</groupId>
+		<artifactId>sopremo-dopa</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+	<groupId>eu.dopa</groupId>
+	<artifactId>init-maven-dependencies</artifactId>
+
+	<build>
+		<plugins>
+			<!-- Install into local maven repo all libs in lib directory -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-install-plugin</artifactId>
+				<version>2.5.1</version>
+				<executions>
+					<execution>
+						<id>install-IMService</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+						<configuration>
+							<file>lib/IMService-1.7-SNAPSHOT.jar</file>
+							<groupId>net.internetmemory</groupId>
+							<artifactId>IMService</artifactId>
+							<version>1.7-SNAPSHOT</version>
+							<packaging>jar</packaging>
+						</configuration>
+					</execution>
+					<execution>
+						<id>install-IMCommons</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+						<configuration>
+							<file>lib/IMCommons-1.7-SNAPSHOT.jar</file>
+							<groupId>net.internetmemory</groupId>
+							<artifactId>IMCommons</artifactId>
+							<version>1.7-SNAPSHOT</version>
+							<packaging>jar</packaging>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
