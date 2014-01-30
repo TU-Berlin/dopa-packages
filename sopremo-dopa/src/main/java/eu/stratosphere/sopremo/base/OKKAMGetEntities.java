@@ -72,7 +72,7 @@ public class OKKAMGetEntities extends ElementaryOperator<OKKAMGetEntities> {
                     GetOkkamAnnotatedEntitiesQuery query = new GetOkkamAnnotatedEntitiesQuery();
                     query.setCrawlid(crawl);
                     query.setDatapool(DopaDatapools.valueOf(poolid));
-                    IJsonNode urls = ((IObjectNode) value).get("url");
+                    IJsonNode urls = ((IObjectNode) value).get("uri");
                     List<String> queryurls  = null;
                     if (urls instanceof IArrayNode) {
                         IArrayNode urlarray = (IArrayNode) urls;
