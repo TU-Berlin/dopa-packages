@@ -17,6 +17,8 @@ import eu.stratosphere.sopremo.type.*;
 import org.okkam.dopa.apis.beans.request.GetOkkamAnnotatedEntitiesQuery;
 import org.okkam.dopa.apis.beans.request.GetUnstructuredDocumentsQuery;
 import org.okkam.dopa.apis.client.OkkamDopaIndexClient;
+import org.okkam.dopa.apis.client.OkkamIndexClientParameters;
+import org.okkam.dopa.apis.client.compression.CompressionAlgorithm;
 import org.okkam.dopa.apis.response.GetOkkamAnnotatedEntitiesResponse;
 import org.okkam.dopa.apis.response.GetUnstructuredDocumentsResponse;
 import org.okkam.dopa.buffer.beans.Detection;
@@ -41,9 +43,11 @@ public class OKKAMUnstructuredDocuments extends ElementaryOperator<OKKAMUnstruct
     public static final String ACCESS_PARAMETER = "OKKAM.document.access.parameter";
     public static final String DATAPOOL_PARAMETER = "OKKAM.document.datapool.parameter";
     public static final String CRAWLID_PARAMETER = "OKKAM.document.crawlid.parameter";
+    public static final String LIMIT_PARAMETER = "OKKAM.document.limit.parameter";
 
     private String crawlID = null;
     private String dataPool = null;
+    private int limit = 10;
 
     private EvaluationExpression accessExtression;
 
@@ -57,13 +61,18 @@ public class OKKAMUnstructuredDocuments extends ElementaryOperator<OKKAMUnstruct
 
         private String poolid;
 
+        private int limit;
+
         @Override
         public void open(Configuration parameters) {
             super.open(parameters);
-            client = new OkkamDopaIndexClient("okkam4.disi.unitn.it:80", "okkam-index", 10);
+            OkkamIndexClientParameters okkamparameters = new OkkamIndexClientParameters("okkam4.disi.unitn.it:80", "/okkam-index");
+            okkamparameters.setCompressor(CompressionAlgorithm.LZ4);
+            client = new OkkamDopaIndexClient(okkamparameters);
             accessExpression = SopremoUtil.getObject(parameters, ACCESS_PARAMETER, null);
             poolid = parameters.getString(DATAPOOL_PARAMETER, null);
             crawl = parameters.getString(CRAWLID_PARAMETER, null);
+            limit = parameters.getInteger(LIMIT_PARAMETER, 10);
         }
 
         @Override
@@ -71,9 +80,10 @@ public class OKKAMUnstructuredDocuments extends ElementaryOperator<OKKAMUnstruct
             String entityID =  accessExpression.evaluate(value).toString();
 
             GetUnstructuredDocumentsQuery query = new GetUnstructuredDocumentsQuery();
-            query.setQueryOkkamIds("okkam-content-entity:" + entityID);
+            query.setQueryOkkamIds("okkamized-content-entity:" + entityID);
             query.setCrawlid(crawl);
             query.setDatapool(DopaDatapools.valueOf(poolid));
+            query.setLimit(limit);
             try {
                 GetUnstructuredDocumentsResponse response = client.getUnstructuredDocuments(query, false);
                 List<String> urls =  response.getOkkamIdUris();
@@ -86,7 +96,7 @@ public class OKKAMUnstructuredDocuments extends ElementaryOperator<OKKAMUnstruct
                 result.put("entityID", new TextNode(entityID));
                 result.put("documentID", docID);
                 for (String url : urls) {
-                    docID.put("url", new TextNode(url));
+                    docID.put("uri", new TextNode(url));
                     out.collect(result);
                 }
             } catch (IOException e) {
@@ -102,6 +112,7 @@ public class OKKAMUnstructuredDocuments extends ElementaryOperator<OKKAMUnstruct
         SopremoUtil.setObject(stubConfiguration, ACCESS_PARAMETER, accessExtression);
         stubConfiguration.setString(DATAPOOL_PARAMETER, dataPool);
         stubConfiguration.setString(CRAWLID_PARAMETER, crawlID);
+        stubConfiguration.setInteger(LIMIT_PARAMETER, limit);
     }
 
     @Property(preferred = true)
@@ -128,5 +139,18 @@ public class OKKAMUnstructuredDocuments extends ElementaryOperator<OKKAMUnstruct
         if (value == null)
             throw new NullPointerException("DocumentID access expression must not be null");
         dataPool = value.evaluate(NullNode.getInstance()).toString();
+    }
+
+    @Property(preferred = true)
+    @Name(noun = "limit")
+    public void setLimit(EvaluationExpression value) {
+        if (value == null)
+            throw new NullPointerException("Limit expression must not be null");
+        IJsonNode limitnode = value.evaluate(NullNode.getInstance());
+        if (limitnode instanceof INumericNode) {
+            limit = ((INumericNode) limitnode).getIntValue();
+        } else {
+            throw new ClassCastException("Limit must be numeric");
+        }
     }
 }

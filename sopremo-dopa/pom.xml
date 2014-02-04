@@ -90,6 +90,11 @@
                 <version>0.4-hadoop2-SNAPSHOT</version>
                 <scope>provided</scope>
             </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpasyncclient</artifactId>
+                <version>4.0</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

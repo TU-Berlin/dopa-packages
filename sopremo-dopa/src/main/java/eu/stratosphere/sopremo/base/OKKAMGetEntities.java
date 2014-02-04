@@ -18,6 +18,8 @@ import eu.stratosphere.sopremo.serialization.SopremoRecordLayout;
 import eu.stratosphere.sopremo.type.*;
 import org.okkam.dopa.apis.beans.request.GetOkkamAnnotatedEntitiesQuery;
 import org.okkam.dopa.apis.client.OkkamDopaIndexClient;
+import org.okkam.dopa.apis.client.OkkamIndexClientParameters;
+import org.okkam.dopa.apis.client.compression.CompressionAlgorithm;
 import org.okkam.dopa.apis.response.GetOkkamAnnotatedEntitiesResponse;
 import org.okkam.dopa.buffer.beans.Detection;
 import org.okkam.dopa.buffer.beans.Document;
@@ -55,15 +57,17 @@ public class OKKAMGetEntities extends ElementaryOperator<OKKAMGetEntities> {
         @Override
         public void open(Configuration parameters) {
             super.open(parameters);
-            client = new OkkamDopaIndexClient("okkam4.disi.unitn.it:80", "okkam-index", 10);
+            OkkamIndexClientParameters okkamparameters = new OkkamIndexClientParameters("okkam4.disi.unitn.it:80", "/okkam-index");
+            okkamparameters.setCompressor(CompressionAlgorithm.LZ4);
+            client = new OkkamDopaIndexClient(okkamparameters);
             accessExpression = SopremoUtil.getObject(parameters, ACCESS_PARAMETER, null);
         }
 
         @Override
         protected void map(IJsonNode value, JsonCollector<IJsonNode> out) {
-            value = accessExpression.evaluate(value);
-            if (value instanceof IObjectNode) {
-                IJsonNode pool = ((IObjectNode) value).get("pool");
+            IJsonNode valueAccess = accessExpression.evaluate(value);
+            if (valueAccess instanceof IObjectNode && value instanceof IObjectNode) {
+                IJsonNode pool = ((IObjectNode) valueAccess).get("pool");
                 if (pool instanceof IObjectNode) {
                     IJsonNode id = ((IObjectNode) pool).get("id");
                     IJsonNode crawlid = ((IObjectNode) pool).get("crawl");
@@ -72,7 +76,7 @@ public class OKKAMGetEntities extends ElementaryOperator<OKKAMGetEntities> {
                     GetOkkamAnnotatedEntitiesQuery query = new GetOkkamAnnotatedEntitiesQuery();
                     query.setCrawlid(crawl);
                     query.setDatapool(DopaDatapools.valueOf(poolid));
-                    IJsonNode urls = ((IObjectNode) value).get("uri");
+                    IJsonNode urls = ((IObjectNode) valueAccess).get("uri");
                     List<String> queryurls  = null;
                     if (urls instanceof IArrayNode) {
                         IArrayNode urlarray = (IArrayNode) urls;
@@ -89,19 +93,12 @@ public class OKKAMGetEntities extends ElementaryOperator<OKKAMGetEntities> {
                     try {
                         GetOkkamAnnotatedEntitiesResponse response = client.getOkkamAnnotatedEntities(query, false);
                         List<Document> docs =  response.getOkkamAnnotations();
-                        ObjectNode poolresult = new ObjectNode();
-                        poolresult.put("id", new TextNode(poolid));
-                        poolresult.put("crawl", new TextNode(crawl));
-                        ObjectNode result = new ObjectNode();
-                        result.put("pool", poolresult);
+
                         for (Document doc : docs) {
-                            System.out.println("##### Found " + docs.size() + "documents");
-                            result.put("url", new TextNode(doc.getUri()));
                             for (Detection detection : doc.getDetections()) {
-                                System.out.println("##### Found " + doc.getDetections().size() + "detections");
                                 if (detection.getOkkamId() != null ) {
-                                    result.put("entityID", new TextNode(detection.getOkkamId()));
-                                    out.collect(result);
+                                    ((IObjectNode) value).put("entityID", new TextNode(detection.getOkkamId()));
+                                    out.collect(value);
                                 }
                             }
                         }
