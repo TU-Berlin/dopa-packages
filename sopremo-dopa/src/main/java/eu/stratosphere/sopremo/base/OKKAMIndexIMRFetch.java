@@ -115,7 +115,7 @@ public class OKKAMIndexIMRFetch extends ElementaryOperator<OKKAMIndexIMRFetch> {
                     // TODO implement exception handling
                 }
                 if (ret.getError() == null) {
-                    docIds = ret.getDocIds();
+                //    docIds = ret.getDocIds();
                     table = getHTable();
 
                     List<Get> gets = new ArrayList<Get>();
@@ -142,7 +142,7 @@ public class OKKAMIndexIMRFetch extends ElementaryOperator<OKKAMIndexIMRFetch> {
             if (resultIndex < results.length) {
                 Result res = results[resultIndex];
                 // TODO extract data from result
-                res.get
+             //   res.get
                 resultIndex++;
                 return true;
             }
