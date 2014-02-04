@@ -2,7 +2,6 @@
 logs.zip
 .idea
 .idea/*
-*.jar
 target
 .classpath
 .project
