@@ -23,6 +23,8 @@ import eu.stratosphere.sopremo.type.ObjectNode;
 import eu.stratosphere.sopremo.type.TextNode;
 import org.okkam.dopa.apis.beans.request.GetUnstructuredDocumentsQuery;
 import org.okkam.dopa.apis.client.OkkamDopaIndexClient;
+import org.okkam.dopa.apis.client.OkkamIndexClientParameters;
+import org.okkam.dopa.apis.client.compression.CompressionAlgorithm;
 import org.okkam.dopa.apis.response.GetUnstructuredDocumentsResponse;
 
 import java.io.IOException;
@@ -81,7 +83,9 @@ public class OKKAMIndexAccess extends ElementaryOperator<OKKAMIndexAccess> {
         @Override
         public void open(GenericInputSplit split) throws IOException {
             if (split.getSplitNumber() == 0) {
-                client = new OkkamDopaIndexClient("192.168.0.34:8080", "okkam-index", 10);
+                OkkamIndexClientParameters okkamparameters = new OkkamIndexClientParameters("okkam4.disi.unitn.it:80", "/okkam-index");
+                okkamparameters.setCompressor(CompressionAlgorithm.LZ4);
+                client = new OkkamDopaIndexClient(okkamparameters);
 
                 ObjectMapper mapper = new ObjectMapper();
                 GetUnstructuredDocumentsQuery query = mapper.readValue(queryString, GetUnstructuredDocumentsQuery.class);
