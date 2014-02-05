@@ -15,7 +15,7 @@ import java.util.Map;
 /**
  * Created by mleich on 27/01/14.
  */
-public class ImrSearchTest {
+public class ImrTests {
 
     // REST API root URL
     public static final String REST_API_ROOT_URI = "http://service.mignify.com/";
