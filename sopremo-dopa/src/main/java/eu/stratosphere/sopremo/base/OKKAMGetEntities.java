@@ -1,12 +1,10 @@
 package eu.stratosphere.sopremo.base;
 
-import eu.stratosphere.nephele.configuration.Configuration;
-import eu.stratosphere.pact.common.plan.PactModule;
-import eu.stratosphere.pact.generic.contract.Contract;
-import eu.stratosphere.sopremo.EvaluationContext;
+
+import eu.stratosphere.api.common.operators.Operator;
+import eu.stratosphere.configuration.Configuration;
 import eu.stratosphere.sopremo.expressions.EvaluationExpression;
 import eu.stratosphere.sopremo.expressions.InputSelection;
-import eu.stratosphere.sopremo.io.JsonGenerator;
 import eu.stratosphere.sopremo.operator.ElementaryOperator;
 import eu.stratosphere.sopremo.operator.InputCardinality;
 import eu.stratosphere.sopremo.operator.Name;
@@ -14,8 +12,10 @@ import eu.stratosphere.sopremo.operator.Property;
 import eu.stratosphere.sopremo.pact.JsonCollector;
 import eu.stratosphere.sopremo.pact.SopremoMap;
 import eu.stratosphere.sopremo.pact.SopremoUtil;
-import eu.stratosphere.sopremo.serialization.SopremoRecordLayout;
-import eu.stratosphere.sopremo.type.*;
+import eu.stratosphere.sopremo.type.IArrayNode;
+import eu.stratosphere.sopremo.type.IJsonNode;
+import eu.stratosphere.sopremo.type.IObjectNode;
+import eu.stratosphere.sopremo.type.TextNode;
 import org.okkam.dopa.apis.beans.request.GetOkkamAnnotatedEntitiesQuery;
 import org.okkam.dopa.apis.client.OkkamDopaIndexClient;
 import org.okkam.dopa.apis.client.OkkamIndexClientParameters;
@@ -26,7 +26,6 @@ import org.okkam.dopa.buffer.beans.Document;
 import org.okkam.dopa.buffer.beans.DopaDatapools;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -111,8 +110,8 @@ public class OKKAMGetEntities extends ElementaryOperator<OKKAMGetEntities> {
     }
 
     @Override
-    protected void configureContract(Contract contract, Configuration stubConfiguration, EvaluationContext context, SopremoRecordLayout layout) {
-        super.configureContract(contract, stubConfiguration, context, layout);
+    protected void configureOperator(Operator contract, Configuration stubConfiguration) {
+        super.configureOperator(contract, stubConfiguration);
         SopremoUtil.setObject(stubConfiguration, ACCESS_PARAMETER, accessExtression);
     }
 

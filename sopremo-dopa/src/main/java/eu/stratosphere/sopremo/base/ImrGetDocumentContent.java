@@ -1,7 +1,7 @@
 package eu.stratosphere.sopremo.base;
 
-import eu.stratosphere.nephele.configuration.Configuration;
-import eu.stratosphere.pact.generic.contract.Contract;
+import eu.stratosphere.api.common.operators.Operator;
+import eu.stratosphere.configuration.Configuration;
 import eu.stratosphere.sopremo.EvaluationContext;
 import eu.stratosphere.sopremo.expressions.EvaluationExpression;
 import eu.stratosphere.sopremo.operator.ElementaryOperator;
@@ -10,7 +10,6 @@ import eu.stratosphere.sopremo.operator.Name;
 import eu.stratosphere.sopremo.operator.Property;
 import eu.stratosphere.sopremo.pact.JsonCollector;
 import eu.stratosphere.sopremo.pact.SopremoMap;
-import eu.stratosphere.sopremo.pact.SopremoUtil;
 import eu.stratosphere.sopremo.serialization.SopremoRecordLayout;
 import eu.stratosphere.sopremo.type.*;
 import net.internetmemory.commons.searching.AdaptedResponse;
@@ -133,8 +132,8 @@ public class ImrGetDocumentContent extends ElementaryOperator<ImrGetDocumentCont
     }
 
     @Override
-    protected void configureContract(Contract contract, Configuration stubConfiguration, EvaluationContext context, SopremoRecordLayout layout) {
-        super.configureContract(contract, stubConfiguration, context, layout);
+    protected void configureOperator(Operator contract, Configuration stubConfiguration) {
+        super.configureOperator(contract, stubConfiguration);
         stubConfiguration.setString(CRAWLID_PARAMETER, crawlId);
     }
 

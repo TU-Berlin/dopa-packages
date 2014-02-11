@@ -1,7 +1,7 @@
 package eu.stratosphere.sopremo.base;
 
-import eu.stratosphere.nephele.configuration.Configuration;
-import eu.stratosphere.pact.generic.contract.Contract;
+import eu.stratosphere.api.common.operators.Operator;
+import eu.stratosphere.configuration.Configuration;
 import eu.stratosphere.sopremo.EvaluationContext;
 import eu.stratosphere.sopremo.expressions.EvaluationExpression;
 import eu.stratosphere.sopremo.expressions.InputSelection;
@@ -105,10 +105,9 @@ public class OKKAMUnstructuredDocuments extends ElementaryOperator<OKKAMUnstruct
         }
     }
 
-
     @Override
-    protected void configureContract(Contract contract, Configuration stubConfiguration, EvaluationContext context, SopremoRecordLayout layout) {
-        super.configureContract(contract, stubConfiguration, context, layout);
+    protected void configureOperator(Operator contract, Configuration stubConfiguration) {
+        super.configureOperator(contract, stubConfiguration);
         SopremoUtil.setObject(stubConfiguration, ACCESS_PARAMETER, accessExtression);
         stubConfiguration.setString(DATAPOOL_PARAMETER, dataPool);
         stubConfiguration.setString(CRAWLID_PARAMETER, crawlID);

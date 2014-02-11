@@ -1,12 +1,13 @@
 package eu.stratosphere.sopremo.base;
 
 
-import eu.stratosphere.nephele.configuration.Configuration;
-import eu.stratosphere.nephele.template.GenericInputSplit;
-import eu.stratosphere.pact.common.contract.GenericDataSource;
-import eu.stratosphere.pact.common.io.statistics.BaseStatistics;
+import eu.stratosphere.api.common.io.InputFormat;
+import eu.stratosphere.api.common.io.statistics.BaseStatistics;
+import eu.stratosphere.api.common.operators.GenericDataSource;
+import eu.stratosphere.api.common.operators.Operator;
+import eu.stratosphere.configuration.Configuration;
+import eu.stratosphere.core.io.GenericInputSplit;
 import eu.stratosphere.pact.common.plan.PactModule;
-import eu.stratosphere.pact.generic.io.InputFormat;
 import eu.stratosphere.sopremo.EvaluationContext;
 import eu.stratosphere.sopremo.SopremoEnvironment;
 import eu.stratosphere.sopremo.expressions.EvaluationExpression;
@@ -16,7 +17,6 @@ import eu.stratosphere.sopremo.operator.ElementaryOperator;
 import eu.stratosphere.sopremo.operator.InputCardinality;
 import eu.stratosphere.sopremo.operator.Name;
 import eu.stratosphere.sopremo.operator.Property;
-import eu.stratosphere.sopremo.pact.SopremoUtil;
 import eu.stratosphere.sopremo.serialization.SopremoRecord;
 import eu.stratosphere.sopremo.serialization.SopremoRecordLayout;
 import eu.stratosphere.sopremo.type.*;
@@ -64,16 +64,6 @@ public class DataMarketAccess extends ElementaryOperator<DataMarketAccess> {
         private String maxDate;
 
 		private Iterator<IJsonNode> nodeIterator;
-
-		@Override
-		public void configure(Configuration parameters) {
-			this.context = SopremoUtil.getEvaluationContext(parameters);
-            SopremoEnvironment.getInstance().setEvaluationContext(context);
-			urlParameter = parameters.getString(DM_URL_PARAMETER, null);
-			apiKey = parameters.getString(DM_API_KEY_PARAMETER, null);
-            minDate = parameters.getString(DM_MIN_DATE, null);
-            maxDate = parameters.getString(DM_MAX_DATE, null);
-		}
 
 		/*
 		 * (non-Javadoc)
@@ -178,6 +168,16 @@ public class DataMarketAccess extends ElementaryOperator<DataMarketAccess> {
 		public Class<GenericInputSplit> getInputSplitType() {
 			return GenericInputSplit.class;
 		}
+
+        @Override
+        public void configure(eu.stratosphere.configuration.Configuration configuration) {
+            this.context = SopremoEnvironment.getInstance().getEvaluationContext();
+            SopremoEnvironment.getInstance().setEvaluationContext(context);
+            urlParameter = configuration.getString(DM_URL_PARAMETER, null);
+            apiKey = configuration.getString(DM_API_KEY_PARAMETER, null);
+            minDate = configuration.getString(DM_MIN_DATE, null);
+            maxDate = configuration.getString(DM_MAX_DATE, null);
+        }
 
         @Override
         public BaseStatistics getStatistics(BaseStatistics baseStatistics) throws IOException {
@@ -468,21 +468,20 @@ public class DataMarketAccess extends ElementaryOperator<DataMarketAccess> {
 		return result;
 	}
 
-	@Override
-	public PactModule asPactModule(EvaluationContext context, SopremoRecordLayout layout) {
-		GenericDataSource<?> contract = new GenericDataSource<DataMarketInputFormat>(
-				DataMarketInputFormat.class, String.format("DataMarket %s", urlParameterNodeString));
+    @Override
+    protected Operator getOperator(SopremoRecordLayout layout) {
+        return new GenericDataSource<DataMarketInputFormat>(
+                DataMarketInputFormat.class, String.format("DataMarket %s", urlParameterNodeString));
+    }
 
-		final PactModule pactModule = new PactModule(0, 1);
-        SopremoUtil.setEvaluationContext(contract.getParameters(), context);
-        SopremoUtil.setLayout(contract.getParameters(), layout);
+    @Override
+    protected void configureOperator(Operator contract, Configuration stubConfiguration) {
+        super.configureOperator(contract, stubConfiguration);
         contract.getParameters().setString(DM_URL_PARAMETER, urlParameterNodeString);
         contract.getParameters().setString(DM_API_KEY_PARAMETER, dmApiKeyString);
         contract.getParameters().setString(DM_MAX_DATE, maxdate);
         contract.getParameters().setString(DM_MIN_DATE, mindate);
-		pactModule.getOutput(0).setInput(contract);
-		return pactModule;
-	}
+    }
 
 	@Property(preferred = true)
 	@Name(noun = "for")

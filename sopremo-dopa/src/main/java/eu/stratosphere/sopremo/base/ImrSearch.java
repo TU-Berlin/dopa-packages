@@ -1,17 +1,15 @@
 package eu.stratosphere.sopremo.base;
 
-
-import eu.stratosphere.nephele.configuration.Configuration;
-import eu.stratosphere.nephele.template.GenericInputSplit;
-import eu.stratosphere.pact.common.contract.GenericDataSource;
-import eu.stratosphere.pact.common.io.statistics.BaseStatistics;
+import eu.stratosphere.api.common.io.InputFormat;
+import eu.stratosphere.api.common.io.statistics.BaseStatistics;
+import eu.stratosphere.api.common.operators.GenericDataSource;
+import eu.stratosphere.api.common.operators.Operator;
+import eu.stratosphere.configuration.Configuration;
+import eu.stratosphere.core.io.GenericInputSplit;
 import eu.stratosphere.pact.common.plan.PactModule;
-import eu.stratosphere.pact.generic.io.InputFormat;
 import eu.stratosphere.sopremo.EvaluationContext;
 import eu.stratosphere.sopremo.SopremoEnvironment;
 import eu.stratosphere.sopremo.expressions.EvaluationExpression;
-import eu.stratosphere.sopremo.io.JsonParseException;
-import eu.stratosphere.sopremo.io.JsonParser;
 import eu.stratosphere.sopremo.operator.ElementaryOperator;
 import eu.stratosphere.sopremo.operator.InputCardinality;
 import eu.stratosphere.sopremo.operator.Name;
@@ -91,7 +89,7 @@ public class ImrSearch extends ElementaryOperator<ImrSearch> {
 
 		@Override
 		public void configure(Configuration parameters) {
-			this.context = SopremoUtil.getEvaluationContext(parameters);
+			this.context = SopremoEnvironment.getInstance().getEvaluationContext();
             SopremoEnvironment.getInstance().setEvaluationContext(context);
 			queryParameter = parameters.getString(IMR_QUERY_PARAMETER, null);
 			apiKey = parameters.getString(DM_API_KEY_PARAMETER, null);
@@ -211,18 +209,16 @@ public class ImrSearch extends ElementaryOperator<ImrSearch> {
 		return result;
 	}
 
-	@Override
-	public PactModule asPactModule(EvaluationContext context, SopremoRecordLayout layout) {
-		GenericDataSource<?> contract = new GenericDataSource<ImrMignifySearch>(
-				ImrMignifySearch.class, String.format("ImrMignifySearch %s", queryParameterNodeString));
+    @Override
+    protected Operator getOperator(SopremoRecordLayout layout) {
+        return new GenericDataSource<ImrMignifySearch>(ImrMignifySearch.class, String.format("ImrMignifySearch %s", queryParameterNodeString));
+    }
 
-		final PactModule pactModule = new PactModule(0, 1);
-        SopremoUtil.setEvaluationContext(contract.getParameters(), context);
-        SopremoUtil.setLayout(contract.getParameters(), layout);
+    @Override
+    protected void configureOperator(Operator contract, Configuration stubConfiguration) {
+        super.configureOperator(contract, stubConfiguration);
         contract.getParameters().setString(IMR_QUERY_PARAMETER, queryParameterNodeString);
-		pactModule.getOutput(0).setInput(contract);
-		return pactModule;
-	}
+    }
 
 	@Property(preferred = true)
 	@Name(noun = "for")

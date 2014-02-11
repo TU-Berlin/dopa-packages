@@ -15,19 +15,19 @@
 		<dependency>
 			<groupId>eu.stratosphere</groupId>
 			<artifactId>sopremo-common</artifactId>
-			<version>0.4-SNAPSHOT</version>
+			<version>0.5-hadoop2-SNAPSHOT</version>
             <scope>provided</scope>
 		</dependency>
         <dependency>
             <groupId>eu.stratosphere</groupId>
             <artifactId>sopremo-testplan</artifactId>
-            <version>0.4-SNAPSHOT</version>
+            <version>0.5-hadoop2-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>eu.stratosphere</groupId>
-            <artifactId>pact-hbase</artifactId>
-            <version>0.4-hadoop2-SNAPSHOT</version>
+            <artifactId>hbase</artifactId>
+            <version>0.5-hadoop2-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -78,7 +78,14 @@
             <version>2.6</version>
         </dependency>
 
-	</dependencies>
+        <!-- no idea where these come from -->
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <version>4.3.0</version>
+        </dependency>
+
+    </dependencies>
 
 
 
@@ -126,8 +133,6 @@
                     </descriptorRefs>
                 </configuration>
             </plugin>
-
-
         </plugins>
 	</build>
 </project>
