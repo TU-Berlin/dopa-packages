@@ -18,30 +18,16 @@
 				<version>2.5.1</version>
 				<executions>
 					<execution>
-						<id>install-IMService</id>
+						<id>install-IMPlatform</id>
 						<phase>generate-sources</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
 						<configuration>
-							<file>lib/IMService-1.7-SNAPSHOT.jar</file>
+							<file>lib/IMDist-1.8-platform.jar</file>
 							<groupId>net.internetmemory</groupId>
-							<artifactId>IMService</artifactId>
-							<version>1.7-SNAPSHOT</version>
-							<packaging>jar</packaging>
-						</configuration>
-					</execution>
-					<execution>
-						<id>install-IMCommons</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>install-file</goal>
-						</goals>
-						<configuration>
-							<file>lib/IMCommons-1.7-SNAPSHOT.jar</file>
-							<groupId>net.internetmemory</groupId>
-							<artifactId>IMCommons</artifactId>
-							<version>1.7-SNAPSHOT</version>
+							<artifactId>IMPlatform</artifactId>
+							<version>1.8-SNAPSHOT</version>
 							<packaging>jar</packaging>
 						</configuration>
 					</execution>
